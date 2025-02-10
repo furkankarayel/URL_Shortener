@@ -5,14 +5,13 @@ createdb:
 	docker exec -it short-url-db createdb --username=root --owner=root shorturldb
 
 dropdb:
-	docker exec -it short-url-db dropdb --username=root --owner=root shorturldb
+	migrate -path migrations -database "postgresql://root:secret@localhost:5432/shorturldb?sslmode=disable" -verbose drop
 
 migrateup:
-	migrate -path db/migrations -database "postgresql://root:secret@localhost:5432/shorturldb?sslmode=disable" -verbose up
-
+	migrate -path migrations -database "postgresql://root:secret@localhost:5432/shorturldb?sslmode=disable" -verbose up
 
 migratedown:
-	migrate -path db/migrations -database "postgresql://root:secret@localhost:5432/shorturldb?sslmode=disable" -verbose down
+	migrate -path migrations -database "postgresql://root:secret@localhost:5432/shorturldb?sslmode=disable" -verbose down
 
 run:
 	go run ./cmd/main.go
