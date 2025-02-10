@@ -27,9 +27,6 @@ func main() {
 	}
 	urlCache := cache.NewURLCache()
 
-	urlCache.Save("test", "https://stackoverflow.com/quww")
-
-	log.Println(urlCache.Get("test"))
 	topLevelRoutes["url"] = urlshortener.New(db, urlCache)
 
 	svr := api.New(topLevelRoutes)
