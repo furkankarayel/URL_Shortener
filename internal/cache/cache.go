@@ -15,6 +15,7 @@ func NewURLCache() *URLCache {
 }
 
 func (c *URLCache) Save(shortCode, originalURL string) {
+
 	c.store.Store(shortCode, originalURL)
 }
 
@@ -23,6 +24,7 @@ func (c *URLCache) Get(shortCode string) (string, bool) {
 	if !ok {
 		return "", false
 	}
+
 	return value.(string), true
 }
 
