@@ -33,7 +33,7 @@ func (s *URLHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case "shorten":
 		s.URLService.CreateShortURL(w, r)
 	default:
-		s.URLService.GetOriginalURL(w, r)
+		s.URLService.GetOriginalURL(w, r, head)
 
 	}
 }
