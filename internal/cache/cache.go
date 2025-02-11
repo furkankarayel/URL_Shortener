@@ -28,6 +28,22 @@ func (c *URLCache) Get(shortCode string) (string, bool) {
 	return value.(string), true
 }
 
+func (c *URLCache) FindValue(longURL string) (string, bool) {
+	shortCode := ""
+	found := false
+
+	c.store.Range(func(key, value interface{}) bool {
+		if value.(string) == longURL {
+			shortCode = key.(string)
+			found = true
+			return false
+		}
+		return true
+	})
+
+	return shortCode, found
+}
+
 func (c *URLCache) Delete(shortCode string) {
 	c.store.Delete(shortCode)
 }
