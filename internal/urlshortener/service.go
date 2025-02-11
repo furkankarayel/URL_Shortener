@@ -23,28 +23,22 @@ func NewURLService(db *sql.DB, urlCache *cache.URLCache) *URLService {
 }
 
 func (s *URLService) shortenURL(originalURL string) (string, error) {
-
-	log.Println("shortenURL called with " + originalURL)
 	if err := validateInput(originalURL); err != nil {
 		return "", err
 	}
 
-	cachedURL, found := s.urlCache.Get(originalURL)
+	cachedURL, found := s.findShortCodeEntry(originalURL)
 	if found {
-		log.Println("URL found in cache during shortenURL" + cachedURL)
 		return cachedURL, nil
 	}
-	log.Println("URL not found in cache during shortenURL")
 
 	shortCode := utils.GenerateHybridString()
-	log.Println(shortCode)
 
 	query := `INSERT INTO urls (original_url, short_code, created_at) VALUES ($1, $2, $3)`
 	_, err := s.db.Exec(query, originalURL, shortCode, time.Now())
 	if err != nil {
 		return "", err
 	}
-	log.Println("URL inserted into database during shortenURL" + originalURL + " " + shortCode)
 
 	s.urlCache.Save(originalURL, shortCode)
 
@@ -52,33 +46,54 @@ func (s *URLService) shortenURL(originalURL string) (string, error) {
 }
 
 func (s *URLService) getLongURL(shortCode string) (string, error) {
-	log.Println("getLongURL called with " + shortCode)
 
-	longURL, found := s.urlCache.Get(shortCode)
+	longURL, found := s.findLongURLEntry(shortCode)
 	if found {
-		log.Println("URL found in cache during getOriginalURL" + longURL)
 		return longURL, nil
 	}
 
-	query := `SELECT original_url FROM urls WHERE short_code = $1`
-	var originalURL string
-	err := s.db.QueryRow(query, shortCode).Scan(&originalURL)
+	return longURL, nil
+}
+
+func (s *URLService) findShortCodeEntry(originalURL string) (string, bool) {
+
+	shortCode := ""
+	found := false
+	shortCode, found = s.urlCache.FindValue(originalURL)
+	if found {
+		return shortCode, true
+	}
+	query := `SELECT short_code FROM urls WHERE original_url = $1`
+	err := s.db.QueryRow(query, originalURL).Scan(&shortCode)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return "", errors.New("URL not found")
-		}
-		return "", err
+		log.Println("Error during findEntry" + err.Error())
+		return "", false
 	}
 
-	log.Println("URL found in database during getOriginalURL" + originalURL)
+	return shortCode, true
+}
 
-	return originalURL, nil
+func (s *URLService) findLongURLEntry(shortCode string) (string, bool) {
+	longURL := ""
+	found := false
+	longURL, found = s.urlCache.Get(shortCode)
+	if found {
+		return longURL, true
+	}
+	query := `SELECT original_url FROM urls WHERE short_code = $1`
+	err := s.db.QueryRow(query, shortCode).Scan(&longURL)
+	if err != nil {
+		log.Println("Error during findLongURLEntry" + err.Error())
+		return "", false
+	}
+
+	return longURL, true
 }
 
 func validateInput(inputURL string) error {
 	if inputURL == "" {
 		return errors.New("URL cannot be empty")
 	}
-	// Add more validation logic as needed
+
 	return nil
 }
