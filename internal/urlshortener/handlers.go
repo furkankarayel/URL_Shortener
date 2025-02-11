@@ -2,11 +2,9 @@ package urlshortener
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/furkankarayel/URL_Shortener/internal/api"
-	"github.com/furkankarayel/URL_Shortener/internal/utils"
 )
 
 func (s *URLService) CreateShortURL(w http.ResponseWriter, r *http.Request) {
@@ -41,15 +39,12 @@ func (s *URLService) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *URLService) GetOriginalURL(w http.ResponseWriter, r *http.Request) {
+func (s *URLService) GetOriginalURL(w http.ResponseWriter, r *http.Request, shortCode string) {
 	if r.Method != http.MethodGet {
 		api.Respond(w, r, http.StatusMethodNotAllowed, "Method not allowed")
 		return
-	}
 
-	var shortCode string
-	shortCode, r.URL.Path = utils.ShiftPath(r.URL.Path)
-	log.Println(shortCode)
+	}
 
 	originalURL, err := s.getLongURL(shortCode)
 	if err != nil {
