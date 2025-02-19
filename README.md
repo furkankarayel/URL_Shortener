@@ -27,22 +27,7 @@ A simple and efficient URL shortening service built with Go, PostgreSQL, and HTM
 - Docker (recommended)
 
 ## Installation
-
-### Using Docker (Recommended)
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/furkankarayel/URL_Shortener.git
-   cd URL_Shortener
-   ```
-
-2. Build and run the container:
-   ```bash
-   docker build -t url-shortener .
-   docker run -p 8080:8080 -p 5432:5432 url-shortener
-   ```
-
-### Manual Installation
+### Manual Installation with Docker
 
 1. Clone the repository:
    ```bash
