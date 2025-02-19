@@ -8,6 +8,7 @@ import (
 	"github.com/furkankarayel/URL_Shortener/internal/api"
 	"github.com/furkankarayel/URL_Shortener/internal/cache"
 	"github.com/furkankarayel/URL_Shortener/internal/db"
+	"github.com/furkankarayel/URL_Shortener/internal/ui"
 	"github.com/furkankarayel/URL_Shortener/internal/urlshortener"
 )
 
@@ -27,6 +28,7 @@ func main() {
 	}
 	urlCache := cache.NewURLCache()
 
+	topLevelRoutes[""] = ui.New()
 	topLevelRoutes["url"] = urlshortener.New(db, urlCache)
 
 	svr := api.New(topLevelRoutes)
