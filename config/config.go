@@ -10,12 +10,11 @@ import (
 )
 
 type Configuration struct {
-	Host         string `env:"HOST,required"`
-	Port         string `env:"PORT,required"`
-	Database     string `env:"DATABASE,required"`
-	DBUser       string `env:"DB_USER,required"`
-	DBPassword   string `env:"DB_PASSWORD,required"`
-	IsProduction bool   `env:"IS_PRODUCTION,required"`
+	Host       string `env:"HOST,required"`
+	Port       string `env:"PORT,required"`
+	Database   string `env:"DATABASE,required"`
+	DBUser     string `env:"DB_USER,required"`
+	DBPassword string `env:"DB_PASSWORD,required"`
 }
 
 func NewConfig(files ...string) (*Configuration, error) {
