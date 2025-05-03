@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/furkankarayel/URL_Shortener/config"
 	"github.com/furkankarayel/URL_Shortener/internal/api"
 	"github.com/furkankarayel/URL_Shortener/internal/cache"
+	"github.com/furkankarayel/URL_Shortener/internal/config"
 	"github.com/furkankarayel/URL_Shortener/internal/db"
 	"github.com/furkankarayel/URL_Shortener/internal/urlshortener"
 )

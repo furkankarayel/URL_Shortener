@@ -7,7 +7,7 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"github.com/furkankarayel/URL_Shortener/config"
+	"github.com/furkankarayel/URL_Shortener/internal/config"
 )
 
 func NewDB(config *config.Configuration) (*sql.DB, error) {
