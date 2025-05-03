@@ -42,7 +42,7 @@ func (s *URLService) shortenURL(originalURL string) (string, error) {
 
 	s.urlCache.Save(originalURL, shortCode)
 
-	return shortCode, nil
+	return "/url/" + shortCode, nil
 }
 
 func (s *URLService) getLongURL(shortCode string) (string, error) {

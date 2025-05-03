@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>URL Shortener</title>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 </head>
 <body>
     <h1>URL Shortener</h1>
-    <form action="/shorten" method="POST">
+    <form id="shortenForm">
         <input type="url" name="url" placeholder="Enter your URL" required>
-        <button type="submit">Shorten</button>
+        <button hx-post="url/shorten" hx-target="#result" hx-swap="outerHTML">Shorten</button>
     </form>
+    <div id="result"></div>
 </body>
 </html>

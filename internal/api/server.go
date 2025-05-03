@@ -63,3 +63,8 @@ func Respond(w http.ResponseWriter, r *http.Request, status int, data interface{
 
 	return nil
 }
+
+func Redirect(w http.ResponseWriter, r *http.Request, url string, status int) {
+	http.Redirect(w, r, url, status)
+	middleware.LogRequest(r, status)
+}

@@ -1,7 +1,7 @@
 package urlshortener
 
 import (
-	"encoding/json"
+	"html/template"
 	"net/http"
 
 	"github.com/furkankarayel/URL_Shortener/internal/api"
@@ -15,27 +15,40 @@ func (s *URLService) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	var req struct {
-		URL string `json:"url"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		api.Respond(w, r, http.StatusBadRequest, "Invalid request body")
+	parseErr := r.ParseForm()
+	if parseErr != nil {
+		api.Respond(w, r, http.StatusBadRequest, "Failed to parse form data")
 		return
 	}
 
-	if req.URL == "" {
+	url := r.FormValue("url")
+	if url == "" {
 		api.Respond(w, r, http.StatusBadRequest, "URL is required")
 		return
 	}
 
-	shortURL, err := s.shortenURL(req.URL)
+	shortenedURL, err := s.shortenURL(url)
 	if err != nil {
 		api.Respond(w, r, http.StatusInternalServerError, "Failed to shorten URL"+err.Error())
 		return
 	}
 
-	api.Respond(w, r, http.StatusOK, shortURL)
+	tmpl := template.Must(template.New("result").Parse(`
+	<div id="result">
+		<p>Your shortened URL is: <a href="{{.ShortURL}}">{{.ShortURL}}</a></p>
+	</div>
+	`))
+
+	data := struct {
+		ShortURL string
+	}{
+		ShortURL: shortenedURL,
+	}
+
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		http.Error(w, "Failed to render template", http.StatusInternalServerError)
+	}
 
 }
 
@@ -52,6 +65,6 @@ func (s *URLService) GetOriginalURL(w http.ResponseWriter, r *http.Request, shor
 		return
 	}
 
-	api.Respond(w, r, http.StatusOK, originalURL)
+	api.Redirect(w, r, originalURL, http.StatusMovedPermanently)
 
 }
